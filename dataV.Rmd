@@ -1,0 +1,174 @@
+---
+title: "dataV"
+author: "Bentazir fadhallah"
+date: "2022-12-29"
+output: html_document
+---
+
+```{r}
+library(gapminder)
+library(tidyr)
+library(tidyverse)
+library(ggplot2)
+library(broom)
+library(readr)
+library(dplyr)
+install.packages("reshape2")
+```
+
+
+```{r}
+data <- read.csv(file="E:/Mes_Docs/Data Science/Logiciel R/Analyse/data/synthese.csv")
+View(data) #pour afficher le dataset
+```
+
+```{r}
+# Load libraries
+library(patchwork) # To display 2 charts together
+library(tidyverse)
+library(lubridate)
+data <- read.csv(file="E:/Mes_Docs/Data Science/Logiciel R/Analyse/data/synthese.csv")
+# Load data
+#df <- read_csv("covid19-in-france.csv")
+
+# Preprocess data
+ df <- data %>%
+  mutate(date = ymd(date)) %>%  # Convert date column to date format
+  filter(year(date) == '2020')%>%
+  group_by(month(date)) %>%  # Group by date
+  summarise(monthly_deces_hopital = sum(total_deces_hopital),
+                                        monthly_confirmed_cases = sum(total_cas_confirmes)) %>%
+  rename(month = 'month(date)') -> monthly2020
+# Create plot
+p1 <- ggplot(monthly2020 , aes(x = month)) + 
+  geom_line(aes(y = monthly_confirmed_cases/10), color='blue') +
+  geom_line(aes( y = monthly_deces_hopital*10), color = 'red') +
+  ggtitle("TCC VS THD 2020")+
+  
+scale_x_continuous(limits = c(0,13), breaks = seq(1,12,1), expand = c(0, 0))+
+  scale_y_continuous(
+    # Features of the first axis
+    name = "Total confirmed cases",
+    # Add a second axis and specify its features
+    sec.axis = sec_axis(~ ., name="Total hospital deaths"))
+
+#p2 <- ggplot(monthly2020, aes(x = month, y = monthly_confirmed_cases)) + 
+ # geom_line() +
+#scale_x_continuous(limits = c(0,13), breaks = seq(1,12,1), expand = c(0, 0))
+df <- data %>%
+  mutate(date = ymd(date)) %>%  # Convert date column to date format
+  filter(year(date) == '2021')%>%
+  group_by(month(date)) %>%  # Group by date
+  summarise(monthly_deces_hopital = sum(total_deces_hopital),
+                                        monthly_confirmed_cases = sum(total_cas_confirmes)) %>%
+  rename(month = 'month(date)') -> monthly2021
+ p2 <- ggplot(monthly2021 , aes(x = month)) + 
+  geom_line(aes(y = monthly_confirmed_cases/10), color='blue') +
+  geom_line(aes( y = monthly_deces_hopital*10), color = 'red') +
+  ggtitle("TCC VS THD 2021")+
+  
+scale_x_continuous(limits = c(0,13), breaks = seq(1,12,1), expand = c(0, 0))+
+  scale_y_continuous(
+    # Features of the first axis
+    name = "Confirmed Cases",
+    # Add a second axis and specify its features
+    sec.axis = sec_axis(~ ., name="Deces Hopital"))
+p1+p2
+```
+```{r}
+monthly2020
+monthly2021
+```
+
+```{r}
+library(patchwork) # To display 2 charts together
+library(tidyverse)
+library(lubridate)
+data <- read.csv(file="E:/Mes_Docs/Data Science/Logiciel R/Analyse/data/synthese.csv")
+# Preprocess data
+ df <- data %>%
+  mutate(date = ymd(date)) %>%  # Convert date column to date format
+  filter(year(date) == '2020')%>%
+  group_by(month(date)) %>%  # Group by date
+  summarise(monthly_patients_hospitalises = sum(patients_hospitalises),
+            monthly_patients_cured = sum(total_patients_gueris),
+            monthly_nouveaux_patients_hospitalises = sum(nouveaux_patients_hospitalises)) %>%
+  rename(month = 'month(date)') -> monthly2020
+# Create plot
+p1 <- ggplot(monthly2020 , aes(x = month)) + 
+  geom_line(aes(y = monthly_patients_hospitalises*10), color='blue') +
+  geom_line(aes( y = monthly_patients_cured), color = 'red') +
+  geom_line(aes( y = monthly_nouveaux_patients_hospitalises*100), color = 'green') +
+  ggtitle("(PH and NPH) vs PC  2020")+
+  
+scale_x_continuous(limits = c(0,13), breaks = seq(1,12,1), expand = c(0, 0))+
+  scale_y_continuous(
+    # Features of the first axis
+    name = "Patients hospitalises",
+    # Add a second axis and specify its features
+    sec.axis = sec_axis(~ ., name="Patients Cured"))
+
+#p2 <- ggplot(monthly2020, aes(x = month, y = monthly_confirmed_cases)) + 
+ # geom_line() +
+#scale_x_continuous(limits = c(0,13), breaks = seq(1,12,1), expand = c(0, 0))
+df <- data %>%
+  mutate(date = ymd(date)) %>%  # Convert date column to date format
+  filter(year(date) == '2021')%>%
+  group_by(month(date)) %>%  # Group by date
+  summarise(monthly_patients_hospitalises = sum(patients_hospitalises),
+            monthly_patients_cured = sum(total_patients_gueris), 
+            monthly_nouveaux_patients_hospitalises = sum(nouveaux_patients_hospitalises)) %>%
+  
+  rename(month = 'month(date)') -> monthly2021
+  
+ p2 <- ggplot(monthly2021 , aes(x = month)) + 
+  geom_line(aes(y = monthly_patients_hospitalises), color='blue') +
+  geom_line(aes( y = monthly_patients_cured), color = 'red') +
+   geom_line(aes( y = monthly_nouveaux_patients_hospitalises), color = 'green') +
+   
+  ggtitle("(PH and NPH) vs PC 2021")+
+  
+scale_x_continuous(limits = c(0,13), breaks = seq(1,12,1), expand = c(0, 0))+
+  scale_y_continuous(
+    # Features of the first axis
+    name = "Patients hospitalises",
+    # Add a second axis and specify its features
+    sec.axis = sec_axis(~ ., name="Patients Cured"))
+p1+p2
+```
+```{r}
+monthly2020
+monthly2021
+```
+
+
+
+```{r}
+data <- read.csv(file="E:/Mes_Docs/Data Science/Logiciel R/Analyse/data/synthese.csv")
+data$date <- as.Date(data$date, format = "%Y-%m-%d")
+
+# Line plot of total confirmed cases over time
+ggplot(data, aes(x = date, y = total_cas_confirmes)) + 
+  geom_line() + 
+  ggtitle("Total Confirmed Cases Over Time")
+
+# Bar plot of total deaths in hospitals over time
+ggplot(data, aes(x = date, y = total_deces_hopital)) + 
+  geom_bar(stat = "identity") + 
+  ggtitle("Total Deaths in Hospitals Over Time")
+
+# Scatter plot of confirmed cases in EHPADs vs possible cases in EHPADs
+ggplot(data, aes(x = total_cas_confirmes_ehpad, y = total_cas_possibles_ehpad)) + 
+  geom_point() + 
+  ggtitle("Confirmed vs Possible Cases in EHPADs")
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```

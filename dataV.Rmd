@@ -13,7 +13,9 @@ library(ggplot2)
 library(broom)
 library(readr)
 library(dplyr)
-install.packages("reshape2")
+library(patchwork) # To display 2 charts together
+library(tidyverse)
+library(lubridate)
 ```
 
 
@@ -24,9 +26,7 @@ View(data) #pour afficher le dataset
 
 ```{r}
 # Load libraries
-library(patchwork) # To display 2 charts together
-library(tidyverse)
-library(lubridate)
+
 data <- read.csv(file="E:/Mes_Docs/Data Science/Logiciel R/Analyse/data/synthese.csv")
 # Load data
 #df <- read_csv("covid19-in-france.csv")
@@ -122,9 +122,9 @@ df <- data %>%
   rename(month = 'month(date)') -> monthly2021
   
  p2 <- ggplot(monthly2021 , aes(x = month)) + 
-  geom_line(aes(y = monthly_patients_hospitalises), color='blue') +
+  geom_line(aes(y = monthly_patients_hospitalises*10), color='blue') +
   geom_line(aes( y = monthly_patients_cured), color = 'red') +
-   geom_line(aes( y = monthly_nouveaux_patients_hospitalises), color = 'green') +
+   geom_line(aes( y = nouveaux_patients_hospitalises*10), color = 'green') +
    
   ggtitle("(PH and NPH) vs PC 2021")+
   
